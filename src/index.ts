@@ -24,13 +24,26 @@ const V9: T9 = [V8]
 const V10: T10 = [V9]
 
 
+type TpseudoNumber  = any[]
+type TvirtualNumber = Tzero | Array<TvirtualNumber>
+const testV0: TvirtualNumber = Vzero
+const testV1: TvirtualNumber = V1
+const testV2: TvirtualNumber = V2
 
-type TpseudoNumber = any[]
-
-const ConvertRtoT = (n: number, acc: TpseudoNumber = Vzero): TpseudoNumber =>{
-  if (n <= 0) return acc
-  else return ConvertRtoT((n - 1), [acc])
+function ConvertRtoT (n: number): TpseudoNumber {
+  let acc:any = Vzero
+  let i = n
+  while (0 <= i) {
+    acc = [acc]
+    i   = i - 1
+  }
+  return acc
 }
+
+const arrayeq = <T>(a: T[], b: T[]) => {
+  return JSON.stringify(a) === JSON.stringify(b)
+}
+
 
 ////
 // test
@@ -97,6 +110,36 @@ const Tlev0v0:Tlesser<Tzero, Tzero> = false
 
 
 
+"Virtual Number Operations"
+const Vadd = <N extends TpseudoNumber, M extends TpseudoNumber>(n: N, m: M): Tadd<N,M> => {
+  let r:any = n
+  let t:any = m
+  while (arrayeq(t, Vzero)) {
+    r = [r]
+    t = t[0]
+  }
+  return r
+}
+
+const __Vmin = <N extends TpseudoNumber, M extends TpseudoNumber, B extends Tlesser<N, M>>(n: N, m: M, b: B): Tmin<N,M> => {
+  let r:any = n
+  let t:any = m
+  while (arrayeq(t, Vzero)) {
+    r = r[0]
+    t = t[0]
+  }
+  return r
+}
+const Vmin = <N extends TpseudoNumber, M extends TpseudoNumber>(n: N, m: M): Tmin<N, M> => { return __Vmin(n,m,true as Tlesser<N,M>)}
+
+"2024.01.16 test"
+const Vaddv6: T6 = Vadd(V2, V4)
+// const Vaddv7: T7 = Vadd(V2, V4) // Error.
+const VminV2: T2 = Vmin(V5, V3)
+// const __VminV2: T2 = __Vmin(V5, V3, true)
+// const VminV1: T1 = Vmin(V5, V3) // Error.
+// const VminV1: T1 = __Vmin(V5, V3, true) // Error.
+
 
 "Inspection of increase/decrease of a number of elems."
 
@@ -142,12 +185,6 @@ const UnwrapArray = <T>({type, data}: {type: any; data: T[]}): T[] => {
 const saferest = <T>(data: T[]): T[] => {
   return UnwrapArray(WrapRest(WrapArray(data, ConvertRtoT(data.length))))
 }
-
-const arrayeq = <T>(a: T[], b: T[]) => {
-  return JSON.stringify(a) === JSON.stringify(b)
-}
-
-
 
 // ---------------
 // test
