@@ -30,7 +30,11 @@ const testV0: TvirtualNumber = Vzero
 const testV1: TvirtualNumber = V1
 const testV2: TvirtualNumber = V2
 
-function ConvertRtoT (n: number): TpseudoNumber {
+const arrayeq = <T>(a: T[], b: T[]) => {
+  return JSON.stringify(a) === JSON.stringify(b)
+}
+
+const ConvertRtoT = (n: number): TpseudoNumber => {
   let acc:any = Vzero
   let i = n
   while (0 <= i) {
@@ -40,10 +44,15 @@ function ConvertRtoT (n: number): TpseudoNumber {
   return acc
 }
 
-const arrayeq = <T>(a: T[], b: T[]) => {
-  return JSON.stringify(a) === JSON.stringify(b)
+const ConvertTtoR = (n: TpseudoNumber): number => {
+  let r : any = n
+  let i = 0
+  while (!arrayeq(Vzero, r)) {
+    i = i + 1
+    r = r[0]
+  }
+  return i
 }
-
 
 ////
 // test
@@ -51,6 +60,8 @@ console.log('ConvertRtoT, 1 is', ConvertRtoT(1))
 console.log('ConvertRtoT, 4 is', ConvertRtoT(4))
 console.log('ConvertRtoT, 0 is', ConvertRtoT(0))
 const t4: T4 = ConvertRtoT(4)
+console.log('ConvertTtoR, 0 is', ConvertTtoR(Vzero))
+console.log('ConvertTtoR, 1 is', ConvertTtoR(V1))
 
 
 "Math Util for Type Level."
@@ -84,7 +95,7 @@ type Tequal<T, TT> = T extends TT ? (TT extends T ? true : never) : false
 
 type Tgrater<T, TT> = T extends Tzero ? false : (TT extends Tzero ? true : Tgrater<Tdec<T>, Tdec<TT>>)
 
-type Tlesser<T, TT> = T extends Tzero ? (TT extends Tzero ? false : true) : (TT extends Tzero ? false : Tgrater<Tdec<T>, Tdec<TT>>)
+type Tlesser<T, TT> = Tequal<T, TT> extends true ? false : Tgrater<TT, T>
 
 
 // --------------------
@@ -178,6 +189,15 @@ const WrapConj = <T, N extends Array<any>>({type, data}: {type: N; data: T[];}, 
   }
 }
 
+// todo
+// not tested
+const WrapTake = <T, N extends TpseudoNumber, M extends TpseudoNumber, B extends Tlesser<N, M>>(n: N, {type,data}: {type: M; data: T[];}, b: B): {type: N; data: T[];} => {
+  return {
+    type: n,
+    data: data.slice(0, ConvertTtoR(n))
+  }
+}
+
 const UnwrapArray = <T>({type, data}: {type: any; data: T[]}): T[] => {
   return data
 }
@@ -206,6 +226,12 @@ console.log(WrapGet(wtar, V2, true))
 
 console.log(WrapConj(wtar, 19))
 console.log(arrayeq(WrapConj(wtar, 19).type, V5))
+
+const wraptaken = WrapTake(V2, wtar, true)
+console.log(ConvertTtoR(wtar.type))
+console.log(wraptaken)
+
+
 
 //--------------------
 
