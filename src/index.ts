@@ -135,7 +135,7 @@ const Vadd = <N extends TpseudoNumber, M extends TpseudoNumber>(n: N, m: M): Tad
 const __Vmin = <N extends TpseudoNumber, M extends TpseudoNumber, B extends Tlesser<N, M>>(n: N, m: M, b: B): Tmin<N,M> => {
   let r:any = n
   let t:any = m
-  while (arrayeq(t, Vzero)) {
+  while (!arrayeq(t, Vzero)) {
     r = r[0]
     t = t[0]
   }
@@ -198,6 +198,21 @@ const WrapTake = <T, N extends TpseudoNumber, M extends TpseudoNumber, B extends
   }
 }
 
+const WrapDrop =
+    <T, 
+     N extends TpseudoNumber,
+     M extends TpseudoNumber,
+     B extends Tlesser<N,M>>
+    (n: N,
+     {type,data}: {type: M; data: T[]},
+     b: B)
+    : {type: Tmin<M,N>; data: T[];} => {
+      return {
+	  type: Vmin(type,n),
+	  data: data.slice(ConvertTtoR(n),ConvertTtoR(type))
+      }
+    }
+
 const UnwrapArray = <T>({type, data}: {type: any; data: T[]}): T[] => {
   return data
 }
@@ -228,10 +243,12 @@ console.log(WrapConj(wtar, 19))
 console.log(arrayeq(WrapConj(wtar, 19).type, V5))
 
 const wraptaken = WrapTake(V2, wtar, true)
-console.log(ConvertTtoR(wtar.type))
+console.log(ConvertTtoR(wraptaken.type))
 console.log(wraptaken)
-
-
+const wrapdropen = WrapDrop(V3, wtar, true)
+console.log(ConvertTtoR(wrapdropen.type))
+console.log(wrapdropen)
+console.log(ConvertTtoR(Vmin(V4,V3)))
 
 //--------------------
 
