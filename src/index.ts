@@ -23,13 +23,23 @@ const V8: T8 = [V7]
 const V9: T9 = [V8]
 const V10: T10 = [V9]
 
-
 type TpseudoNumber  = any[]
 type TvirtualNumber = Tzero | Array<TvirtualNumber>
 const testV0: TvirtualNumber = Vzero
 const testV1: TvirtualNumber = V1
 const testV2: TvirtualNumber = V2
 
+type TELesserUnion<T> = T extends Array<infer U> ? (T | TELesserUnion<U>) : never
+type TLesserUnion<T>  = T extends Array<infer U> ? TELesserUnion<U> : never
+const testTELesserT3V0: TELesserUnion<T3> = Vzero
+const testTELesserT3V3: TELesserUnion<T3> = V3
+// const testTELesserT3V4: TELesserUnion<T3> = V4 // Error.
+const testTLesserT3V2: TLesserUnion<T3> = V2 // Error.
+// const testTLesserT3V3: TLesserUnion<T3> = V3 // Error.
+
+
+const arraystr = (a: any[]): string => {
+  return JSON.stringify(a)  }
 const arrayeq = <T>(a: T[], b: T[]) => {
   return JSON.stringify(a) === JSON.stringify(b)
 }
@@ -37,7 +47,7 @@ const arrayeq = <T>(a: T[], b: T[]) => {
 const ConvertRtoT = (n: number): TpseudoNumber => {
   let acc:any = Vzero
   let i = n
-  while (0 <= i) {
+  while (0 < i) {
     acc = [acc]
     i   = i - 1
   }
@@ -229,6 +239,20 @@ const WrapConcat =
         data: a.data.concat(b.data)}
     }
 
+const WrapFilter =
+    <T,
+     N extends TpseudoNumber,
+     M extends TELesserUnion<N>>
+    (f: (x: T)=>boolean,
+     {type,data}: {type: N; data: T[]})
+    : {type: M; data: T[]} => {
+      let r : T[] = data.filter(f)
+      return {
+	  type: ConvertRtoT(r.length) as M,
+	  data: r
+      }
+    }
+
 const saferest = <T>(data: T[]): T[] => {
   return UnwrapArray(WrapRest(WrapArray(data, ConvertRtoT(data.length))))
 }
@@ -264,9 +288,17 @@ console.log(ConvertTtoR(wrapdropen.type))
 console.log(wrapdropen)
 console.log(ConvertTtoR(Vmin(V4,V3)))
 
-const wrapconcat = WrapConcat(wtar, wtar2)
+const wrapconcat: TWrapArray<number, T7> = WrapConcat(wtar, wtar2)
+// const wrapconcat2: TWrapArray<number, T6> = WrapConcat(wtar, wtar2) // Error.
 console.log(ConvertTtoR(wrapconcat.type))
 console.log(wrapconcat)
+
+const wrapfilter: TWrapArray<number, TELesserUnion<T7>> = WrapFilter((x:number)=> 3 > x, wrapconcat)
+const wrapfilter2: TWrapArray<number, TELesserUnion<T3>> = WrapFilter((x:number)=> 3 > x, wrapconcat) // NOTE.
+// const wrapfilter3: TWrapArray<number, T10> = WrapFilter((x:number)=> 3 > x, wrapconcat) // Error.
+// console.log(arraystr(ConvertRtoT(2)))
+console.log(ConvertTtoR(wrapfilter.type))
+console.log(wrapfilter)
 
 //--------------------
 
