@@ -125,7 +125,7 @@ const Tlev0v0:Tlesser<Tzero, Tzero> = false
 const Vadd = <N extends TpseudoNumber, M extends TpseudoNumber>(n: N, m: M): Tadd<N,M> => {
   let r:any = n
   let t:any = m
-  while (arrayeq(t, Vzero)) {
+  while (!arrayeq(t, Vzero)) {
     r = [r]
     t = t[0]
   }
@@ -166,6 +166,10 @@ const WrapArray = <T, N>(data: T[], num: N): TWrapArray<T, N> => {
     type: num,
     data: data,
   }
+}
+
+const UnwrapArray = <T>({type, data}: {type: any; data: T[]}): T[] => {
+  return data
 }
 
 const WrapRest = <T, N extends Array<any>>({type, data}: {type: N; data: T[];}): TWrapArray<T, Tdec<N>> => {
@@ -213,9 +217,17 @@ const WrapDrop =
       }
     }
 
-const UnwrapArray = <T>({type, data}: {type: any; data: T[]}): T[] => {
-  return data
-}
+const WrapConcat =
+    <T,
+     N extends TpseudoNumber,
+     M extends TpseudoNumber>
+    (a: {type:N; data: T[];},
+     b: {type:M; data: T[];})
+    : {type: Tadd<N,M>; data: T[]} => {
+      return {
+        type: Vadd(a.type, b.type),
+        data: a.data.concat(b.data)}
+    }
 
 const saferest = <T>(data: T[]): T[] => {
   return UnwrapArray(WrapRest(WrapArray(data, ConvertRtoT(data.length))))
@@ -228,6 +240,7 @@ const tar2   = [4, 5, 6, 7]
 const tarest = [1, 2, 3]
 
 let wtar: TWrapArray<TExtract<typeof tar>, T4> = WrapArray(tar, V4) // this V4 can be real value 4 automaticaly.
+let wtar2: TWrapArray<TExtract<typeof tar>, T3> = WrapArray(tarest, V3)
 wtar = WrapArray(tar2, V4) // It can be done.
 // wtar = WrapArray([4, 5, 6], V3) // Error.
 
@@ -245,10 +258,15 @@ console.log(arrayeq(WrapConj(wtar, 19).type, V5))
 const wraptaken = WrapTake(V2, wtar, true)
 console.log(ConvertTtoR(wraptaken.type))
 console.log(wraptaken)
+
 const wrapdropen = WrapDrop(V3, wtar, true)
 console.log(ConvertTtoR(wrapdropen.type))
 console.log(wrapdropen)
 console.log(ConvertTtoR(Vmin(V4,V3)))
+
+const wrapconcat = WrapConcat(wtar, wtar2)
+console.log(ConvertTtoR(wrapconcat.type))
+console.log(wrapconcat)
 
 //--------------------
 
