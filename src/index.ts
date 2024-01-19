@@ -107,6 +107,10 @@ type Tgrater<T, TT> = T extends Tzero ? false : (TT extends Tzero ? true : Tgrat
 
 type Tlesser<T, TT> = Tequal<T, TT> extends true ? false : Tgrater<TT, T>
 
+type TEgrater<T, TT> = Tequal<T,TT> extends true ? true : Tgrater<T,TT>
+type TElesser<T, TT> = Tequal<T,TT> extends true ? true : Tgrater<TT, T>
+
+
 
 // --------------------
 // test
@@ -142,7 +146,17 @@ const Vadd = <N extends TpseudoNumber, M extends TpseudoNumber>(n: N, m: M): Tad
   return r
 }
 
-const __Vmin = <N extends TpseudoNumber, M extends TpseudoNumber, B extends Tlesser<N, M>>(n: N, m: M, b: B): Tmin<N,M> => {
+// const __Vmin = <N extends TpseudoNumber, M extends TpseudoNumber, B extends Tlesser<M, N>>(n: N, m: M, b: B): Tmin<N,M> => {
+//   let r:any = n
+//   let t:any = m
+//   while (!arrayeq(t, Vzero)) {
+//     r = r[0]
+//     t = t[0]
+//   }
+//   return r
+// }
+
+const Vmin = <N extends TpseudoNumber, M extends TpseudoNumber>(n: N, m: M, b: TElesser<M,N>): Tmin<N,M> => {
   let r:any = n
   let t:any = m
   while (!arrayeq(t, Vzero)) {
@@ -151,16 +165,12 @@ const __Vmin = <N extends TpseudoNumber, M extends TpseudoNumber, B extends Tles
   }
   return r
 }
-const Vmin = <N extends TpseudoNumber, M extends TpseudoNumber>(n: N, m: M): Tmin<N, M> => { return __Vmin(n,m,true as Tlesser<N,M>)}
 
 "2024.01.16 test"
 const Vaddv6: T6 = Vadd(V2, V4)
 // const Vaddv7: T7 = Vadd(V2, V4) // Error.
-const VminV2: T2 = Vmin(V5, V3)
-// const __VminV2: T2 = __Vmin(V5, V3, true)
-// const VminV1: T1 = Vmin(V5, V3) // Error.
-// const VminV1: T1 = __Vmin(V5, V3, true) // Error.
-
+const VminV2: T2 = Vmin(V5, V3, true)
+const VminV0: Tzero = Vmin(V5, V5, true)
 
 "Inspection of increase/decrease of a number of elems."
 
@@ -204,7 +214,6 @@ const WrapConj = <T, N extends Array<any>>({type, data}: {type: N; data: T[];}, 
 }
 
 // todo
-// not tested
 const WrapTake = <T, N extends TpseudoNumber, M extends TpseudoNumber, B extends Tlesser<N, M>>(n: N, {type,data}: {type: M; data: T[];}, b: B): {type: N; data: T[];} => {
   return {
     type: n,
@@ -216,13 +225,13 @@ const WrapDrop =
     <T, 
      N extends TpseudoNumber,
      M extends TpseudoNumber,
-     B extends Tlesser<N,M>>
+     B extends TElesser<N,M>>
     (n: N,
      {type,data}: {type: M; data: T[]},
      b: B)
     : {type: Tmin<M,N>; data: T[];} => {
       return {
-	  type: Vmin(type,n),
+	  type: Vmin(type,n,true as B), // todo.
 	  data: data.slice(ConvertTtoR(n),ConvertTtoR(type))
       }
     }
@@ -282,11 +291,13 @@ console.log(arrayeq(WrapConj(wtar, 19).type, V5))
 const wraptaken = WrapTake(V2, wtar, true)
 console.log(ConvertTtoR(wraptaken.type))
 console.log(wraptaken)
+// const wraptaken2 = WrapTake(V5, wtar, true) // Error.
+
 
 const wrapdropen = WrapDrop(V3, wtar, true)
 console.log(ConvertTtoR(wrapdropen.type))
 console.log(wrapdropen)
-console.log(ConvertTtoR(Vmin(V4,V3)))
+console.log(ConvertTtoR(Vmin(V4,V3,true)))
 
 const wrapconcat: TWrapArray<number, T7> = WrapConcat(wtar, wtar2)
 // const wrapconcat2: TWrapArray<number, T6> = WrapConcat(wtar, wtar2) // Error.
