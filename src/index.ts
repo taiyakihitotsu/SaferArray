@@ -24,10 +24,10 @@ const V9: T9 = [V8]
 const V10: T10 = [V9]
 
 type TpseudoNumber  = any[]
-type TvirtualNumber = Tzero | Array<TvirtualNumber>
-const testV0: TvirtualNumber = Vzero
-const testV1: TvirtualNumber = V1
-const testV2: TvirtualNumber = V2
+// type TvirtualNumber = Tzero | Array<TvirtualNumber>
+// const testV0: TvirtualNumber = Vzero
+// const testV1: TvirtualNumber = V1
+// const testV2: TvirtualNumber = V2
 
 type TELesserUnion<T> = T extends Array<infer U> ? (T | TELesserUnion<U>) : never
 type TLesserUnion<T>  = T extends Array<infer U> ? TELesserUnion<U> : never
@@ -44,7 +44,7 @@ const arrayeq = <T>(a: T[], b: T[]) => {
   return JSON.stringify(a) === JSON.stringify(b)
 }
 
-const ConvertRtoT = (n: number): TpseudoNumber => {
+const RtoV = (n: number): TpseudoNumber => {
   let acc:any = Vzero
   let i = n
   while (0 < i) {
@@ -54,7 +54,7 @@ const ConvertRtoT = (n: number): TpseudoNumber => {
   return acc
 }
 
-const ConvertTtoR = (n: TpseudoNumber): number => {
+const VtoR = (n: TpseudoNumber): number => {
   let r : any = n
   let i = 0
   while (!arrayeq(Vzero, r)) {
@@ -66,12 +66,12 @@ const ConvertTtoR = (n: TpseudoNumber): number => {
 
 ////
 // test
-console.log('ConvertRtoT, 1 is', ConvertRtoT(1))
-console.log('ConvertRtoT, 4 is', ConvertRtoT(4))
-console.log('ConvertRtoT, 0 is', ConvertRtoT(0))
-const t4: T4 = ConvertRtoT(4)
-console.log('ConvertTtoR, 0 is', ConvertTtoR(Vzero))
-console.log('ConvertTtoR, 1 is', ConvertTtoR(V1))
+console.log('RtoV, 1 is', RtoV(1))
+console.log('RtoV, 4 is', RtoV(4))
+console.log('RtoV, 0 is', RtoV(0))
+const t4: T4 = RtoV(4)
+console.log('VtoR, 0 is', VtoR(Vzero))
+console.log('VtoR, 1 is', VtoR(V1))
 
 
 "Math Util for Type Level."
@@ -145,19 +145,21 @@ const Vadd =
 	    r = [r]
 	    t = t[0]
 	}
-	return r}
+	return r
+    }
 
-const Vmin = <N extends TpseudoNumber, M extends TELesserUnion<N>>(n: N, m: M): Tmin<N,M> => {
-  let r:any = n
-  let t:any = m
-  while (!arrayeq(t, Vzero)) {
-    r = r[0]
-    t = t[0]
-  }
-  return r
-}
+const Vmin =
+    <N extends TpseudoNumber, M extends TELesserUnion<N>>
+    (n: N, m: M): Tmin<N,M> => {
+	let r:any = n
+	let t:any = m
+	while (!arrayeq(t, Vzero)) {
+	    r = r[0]
+	    t = t[0]
+	}
+	return r
+    }
 
-"2024.01.16 test"
 const Vaddv6: T6 = Vadd(V2, V4)
 // const Vaddv7: T7 = Vadd(V2, V4) // Error.
 
@@ -189,7 +191,7 @@ const UnwrapArray =
     ({type, data}: {type: any; data: T[]}): T[] => {
 	return data}
 
-const WrapRest =
+const inWrapRest =
     <T, N extends TpseudoNumber>
     ({type, data}: {type: N; data: T[];}): TWrapArray<T, Tdec<N>> => {
 	const [a, ...retdata] = data;
@@ -197,35 +199,35 @@ const WrapRest =
 	    type: type[0],
 	    data: data }}
 
-const WrapGet =
+const inWrapGet =
     <T, N extends TpseudoNumber, S extends TELesserUnion<N>>
     ({type,data}: {type: N; data: T[];}, n:S): T => {
-	return data[ConvertTtoR(n)]}
+	return data[VtoR(n)]}
 
-const WrapConj =
+const inWrapConj =
     <T, N extends TpseudoNumber>
     ({type, data}: {type: N; data: T[];}, v: T): TWrapArray<T, N[]> => {
 	return {
 	    type: [type],
 	    data: [...data, v]}}
 
-const WrapTake =
+const inWrapTake =
     <T, M extends TpseudoNumber, N extends TELesserUnion<M>>
     (n: N, {type,data}: {type: M; data: T[];}): {type: N; data: T[];} => {
 	return {
 	    type: n,
-	    data: data.slice(0, ConvertTtoR(n))
+	    data: data.slice(0, VtoR(n))
 	}}
 
-const WrapDrop =
+const inWrapDrop =
     <T, M extends TpseudoNumber, N extends TELesserUnion<M>>
     (n: N,
      {type,data}: {type: M; data: T[]}): {type: Tmin<M,N>; data: T[];} => {
 	return {
 	    type: Vmin(type,n), // todo.
-	    data: data.slice(ConvertTtoR(n),ConvertTtoR(type))}}
+	    data: data.slice(VtoR(n),VtoR(type))}}
 
-const WrapConcat =
+const inWrapConcat =
     <T, N extends TpseudoNumber, M extends TpseudoNumber>
     (a: {type:N; data: T[];},
      b: {type:M; data: T[];}): {type: Tadd<N,M>; data: T[]} => {
@@ -233,19 +235,19 @@ const WrapConcat =
             type: Vadd(a.type, b.type),
             data: a.data.concat(b.data)}}
 
-const WrapFilter =
+const inWrapFilter =
     <T, N extends TpseudoNumber, M extends TELesserUnion<N>>
     (f: (x: T)=>boolean,
      {type,data}: {type: N; data: T[]}): {type: M; data: T[]} => {
 	let r : T[] = data.filter(f)
 	return {
-	    type: ConvertRtoT(r.length) as M,
+	    type: RtoV(r.length) as M,
 	    data: r}}
 
-const saferest =
-    <T>
-    (data: T[]): T[] => {
-	return UnwrapArray(WrapRest(WrapArray(data, ConvertRtoT(data.length))))}
+// const saferest =
+//     <T>
+//     (data: T[]): T[] => {
+// 	return UnwrapArray(WrapRest(WrapArray(data, RtoV(data.length))))}
 
 // ---------------
 // test
@@ -259,39 +261,49 @@ wtar = WrapArray(tar2, V4) // It can be done.
 // wtar = WrapArray([4, 5, 6], V3) // Error.
 
 const wtarnum: T4 = wtar.type
-const wtarest = WrapRest(wtar)
+const wtarest = inWrapRest(wtar)
 const wtarestnum: T3 = wtarest.type
 
-const sssrest = saferest(tarest)
-console.log(sssrest)
-console.log(WrapGet(wtar, V2))
+// const sssrest = saferest(tarest)
+// console.log(sssrest)
+// console.log(WrapGet(wtar, V2))
 
-console.log(WrapConj(wtar, 19))
-console.log(arrayeq(WrapConj(wtar, 19).type, V5))
+console.log(inWrapConj(wtar, 19))
+console.log(arrayeq(inWrapConj(wtar, 19).type, V5))
 
-const wraptaken = WrapTake(V2, wtar)
-console.log(ConvertTtoR(wraptaken.type))
+const wraptaken = inWrapTake(V2, wtar)
+console.log(VtoR(wraptaken.type))
 console.log(wraptaken)
 // const wraptaken2 = WrapTake(V5, wtaret) // Error.
 
 
-const wrapdropen = WrapDrop(V3, wtar)
-console.log(ConvertTtoR(wrapdropen.type))
+const wrapdropen = inWrapDrop(V3, wtar)
+console.log(VtoR(wrapdropen.type))
 console.log(wrapdropen)
-console.log(ConvertTtoR(Vmin(V4,V3)))
+console.log(VtoR(Vmin(V4,V3)))
 
-const wrapconcat: TWrapArray<number, T7> = WrapConcat(wtar, wtar2)
+const wrapconcat: TWrapArray<number, T7> = inWrapConcat(wtar, wtar2)
 // const wrapconcat2: TWrapArray<number, T6> = WrapConcat(wtar, wtar2) // Error.
-console.log(ConvertTtoR(wrapconcat.type))
+console.log(VtoR(wrapconcat.type))
 console.log(wrapconcat)
 
-const wrapfilter: TWrapArray<number, TELesserUnion<T7>> = WrapFilter((x:number)=> 3 > x, wrapconcat)
-const wrapfilter2: TWrapArray<number, TELesserUnion<T3>> = WrapFilter((x:number)=> 3 > x, wrapconcat) // NOTE.
+const wrapfilter: TWrapArray<number, TELesserUnion<T7>> = inWrapFilter((x:number)=> 3 > x, wrapconcat)
+const wrapfilter2: TWrapArray<number, TELesserUnion<T3>> = inWrapFilter((x:number)=> 3 > x, wrapconcat) // NOTE.
 // const wrapfilter3: TWrapArray<number, T10> = WrapFilter((x:number)=> 3 > x, wrapconcat) // Error.
 // console.log(arraystr(ConvertRtoT(2)))
-console.log(ConvertTtoR(wrapfilter.type))
+console.log(VtoR(wrapfilter.type))
 console.log(wrapfilter)
 
 //--------------------
 
 console.log('well done')
+
+export {Tzero,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10
+       ,Vzero,V1,V2,V3,V4,V5,V6,V7,V8,V9,V10
+       ,TpseudoNumber,TELesserUnion,TLesserUnion
+       ,RtoV,VtoR
+       ,Vadd,Vmin
+       ,TWrapArray
+       ,WrapArray,UnwrapArray
+       ,inWrapRest,inWrapConj,inWrapGet
+       ,inWrapTake,inWrapDrop,inWrapConcat,inWrapFilter}
