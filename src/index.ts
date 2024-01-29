@@ -31,6 +31,7 @@ type TpseudoNumber  = any[]
 
 type TELesserUnion<T> = T extends Array<infer U> ? (T | TELesserUnion<U>) : never
 type TLesserUnion<T>  = T extends Array<infer U> ? TELesserUnion<U> : never
+
 const testTELesserT3V0: TELesserUnion<T3> = Vzero
 const testTELesserT3V3: TELesserUnion<T3> = V3
 // const testTELesserT3V4: TELesserUnion<T3> = V4 // Error.
@@ -91,16 +92,6 @@ type Tmin<T, TT> = TT extends Tzero
     ? Tmin<Tdec<T>, U>
     : never
 
-type Tmul<T, TT, I = T> = T extends (Tzero | T1)
-   ? Tmul<TT, T, TT>
-   : TT extends Tzero
-   ? Tzero
-   : TT extends T1
-   ? T
-   : TT extends Array<infer U>
-   ? Tmul<Tadd<T,I>, U, I>
-   : never
-
 type Tequal<T, TT> = T extends TT ? (TT extends T ? true : never) : false
 
 type Tgrater<T, TT> = T extends Tzero ? false : (TT extends Tzero ? true : Tgrater<Tdec<T>, Tdec<TT>>)
@@ -110,13 +101,31 @@ type Tlesser<T, TT> = Tequal<T, TT> extends true ? false : Tgrater<TT, T>
 type TEgrater<T, TT> = Tequal<T,TT> extends true ? true : Tgrater<T,TT>
 type TElesser<T, TT> = Tequal<T,TT> extends true ? true : Tgrater<TT, T>
 
+type Tmul<T, TT> = T extends T1
+   ? TT
+   : TT extends T1
+   ? T
+   : T extends Tzero
+   ? Tzero
+   : TT extends Tzero
+   ? Tzero
+   : T extends TLesserUnion<TT>
+   ? Tmul<TT, T> 
+   : TT extends Array<infer U>
+   ? Tmul<Tadd<T,T>, U>
+   : never
 
 
 // --------------------
 // test
-const maybe6 : Tmul<T2,T3> = V6
-const maybe0a: Tmul<T5, Tzero> = Vzero
-const maybe0b: Tmul<Tzero, T5> = Vzero
+const Tmul6 : Tmul<T2,T3> = V6
+const Tmul0a: Tmul<T5, Tzero> = Vzero
+const Tmul0b: Tmul<Tzero, T5> = Vzero
+const Tmul0c: Tmul<Tzero, Tzero> = Vzero
+const Tmul0d: Tmul<Tzero, T1> = Vzero
+const Tmul0e: Tmul<T1,Tzero> = Vzero
+const Tmul1a: Tmul<T1, T1> = V1
+
 const maybe0c: Tmin<T2, T1> = V1
 const maybe0d: Tmin<T5, T3> = V2
 
@@ -160,14 +169,37 @@ const Vmin =
 	return r
     }
 
+const Vmul =
+    <N extends TpseudoNumber, M extends TpseudoNumber>
+    (n: N | Tzero | T1, m: M | Tzero | T1): Tmul<N,M> => {
+	if (n === Vzero || m === V1) return n as Tmul<N,M>
+	if (m === Vzero || n === V1) return m as Tmul<N,M>
+	let r  : any = n
+	let tm : any = m
+	while (tm !== V1) {
+	    r  = Vadd(r,n)
+	    tm = Vmin(tm,V1)
+	}
+	return r
+    }
+
+
+
 const Vaddv6: T6 = Vadd(V2, V4)
 // const Vaddv7: T7 = Vadd(V2, V4) // Error.
+const Vaddv6_2: T6 = Vadd(V6,Vzero)
 
 const VminV2_1: T2 = Vmin(V5,V3)
 const VminV0_1: Tzero = Vmin(V5, V5)
 const VminV0_2: Tzero = Vmin(Vzero,Vzero)
 // const VminV2_2: T2 = Vmintest(V5,V2) // Error.
 // const VminV2_3: any = Vmintest(V4,V6) // Error.
+
+const VmulV1_1: T1 = Vmul(V1,V1)
+const VmulV0_1: Tzero = Vmul(V1,Vzero)
+const VmulV0_2: Tzero = Vmul(Vzero,V1)
+const VmulV6_1: T6 = Vmul(V2,V3)
+const VmulV6_2: T6 = Vmul(V3,V2)
 
 
 
@@ -244,10 +276,16 @@ const inWrapFilter =
 	    type: RtoV(r.length) as M,
 	    data: r}}
 
-// const saferest =
-//     <T>
-//     (data: T[]): T[] => {
-// 	return UnwrapArray(WrapRest(WrapArray(data, RtoV(data.length))))}
+// todo
+const inWrapRemove =
+    <T, N extends TpseudoNumber, M extends TELesserUnion<N>>
+    (f: (x: T)=>boolean,
+     {type,data}: {type: N; data: T[]}): {type: M; data: T[]} => {
+	let r : T[] = data.filter((x: T) => !f(x))
+	return {
+	    type: RtoV(r.length) as M,
+	    data: r}}
+
 
 // ---------------
 // test
@@ -263,10 +301,6 @@ wtar = WrapArray(tar2, V4) // It can be done.
 const wtarnum: T4 = wtar.type
 const wtarest = inWrapRest(wtar)
 const wtarestnum: T3 = wtarest.type
-
-// const sssrest = saferest(tarest)
-// console.log(sssrest)
-// console.log(WrapGet(wtar, V2))
 
 console.log(inWrapConj(wtar, 19))
 console.log(arrayeq(inWrapConj(wtar, 19).type, V5))
@@ -290,7 +324,7 @@ console.log(wrapconcat)
 const wrapfilter: TWrapArray<number, TELesserUnion<T7>> = inWrapFilter((x:number)=> 3 > x, wrapconcat)
 const wrapfilter2: TWrapArray<number, TELesserUnion<T3>> = inWrapFilter((x:number)=> 3 > x, wrapconcat) // NOTE.
 // const wrapfilter3: TWrapArray<number, T10> = WrapFilter((x:number)=> 3 > x, wrapconcat) // Error.
-// console.log(arraystr(ConvertRtoT(2)))
+// console.log(arraystr(RtoV(2)))
 console.log(VtoR(wrapfilter.type))
 console.log(wrapfilter)
 
@@ -298,12 +332,14 @@ console.log(wrapfilter)
 
 console.log('well done')
 
-export {Tzero,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10
-       ,Vzero,V1,V2,V3,V4,V5,V6,V7,V8,V9,V10
-       ,TpseudoNumber,TELesserUnion,TLesserUnion
-       ,RtoV,VtoR
-       ,Vadd,Vmin
-       ,TWrapArray
-       ,WrapArray,UnwrapArray
-       ,inWrapRest,inWrapConj,inWrapGet
-       ,inWrapTake,inWrapDrop,inWrapConcat,inWrapFilter}
+export {
+    arrayeq
+    ,Tzero,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10
+    ,Vzero,V1,V2,V3,V4,V5,V6,V7,V8,V9,V10
+    ,TpseudoNumber,TELesserUnion,TLesserUnion
+    ,RtoV,VtoR
+    ,Vadd,Vmin
+    ,TWrapArray
+    ,WrapArray,UnwrapArray
+    ,inWrapRest,inWrapConj,inWrapGet
+    ,inWrapTake,inWrapDrop,inWrapConcat,inWrapFilter}
