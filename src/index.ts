@@ -80,10 +80,14 @@ console.log('VtoR, 1 is', VtoR(V1))
 type Tdec<T> = T extends Array<infer U> ? U : never
 type Tinc<T> = T extends Array<infer U> ? Array<Array<U>> : never
 
+// memo.
+// 2589 error.
 type Tadd<T, TT> = TT extends Tzero
     ? T
-    : T extends Array<infer U>
-    ? Tadd<Tinc<T>, Tdec<TT>>
+    : T extends Tzero
+    ? TT
+    : TT extends Array<infer U>
+    ? Tadd<Tinc<T>, U>
     : never
 
 type Tmin<T, TT> = TT extends Tzero
@@ -101,7 +105,7 @@ type Tlesser<T, TT> = Tequal<T, TT> extends true ? false : Tgrater<TT, T>
 type TEgrater<T, TT> = Tequal<T,TT> extends true ? true : Tgrater<T,TT>
 type TElesser<T, TT> = Tequal<T,TT> extends true ? true : Tgrater<TT, T>
 
-type Tmul<T, TT> = T extends T1
+type Tmul<T, TT, I = T> = T extends T1
    ? TT
    : TT extends T1
    ? T
@@ -109,12 +113,12 @@ type Tmul<T, TT> = T extends T1
    ? Tzero
    : TT extends Tzero
    ? Tzero
-   : T extends TLesserUnion<TT>
-   ? Tmul<TT, T> 
    : TT extends Array<infer U>
-   ? Tmul<Tadd<T,T>, U>
+   ? Tmul<Tadd<T,I>, U, I>
    : never
-
+const v30 = [[[[[[[[[[[[[[[[[[[[V10]]]]]]]]]]]]]]]]]]]]
+const aaaa: Tmul<T4,T4> = [[[[[[V10]]]]]]
+const bbbb: Tmul<T5,T6> = v30
 
 // --------------------
 // test
@@ -178,12 +182,10 @@ const Vmul =
 	let tm : any = m
 	while (tm !== V1) {
 	    r  = Vadd(r,n)
-	    tm = Vmin(tm,V1)
+	    tm = tm[0]
 	}
 	return r
     }
-
-
 
 const Vaddv6: T6 = Vadd(V2, V4)
 // const Vaddv7: T7 = Vadd(V2, V4) // Error.
@@ -200,8 +202,14 @@ const VmulV0_1: Tzero = Vmul(V1,Vzero)
 const VmulV0_2: Tzero = Vmul(Vzero,V1)
 const VmulV6_1: T6 = Vmul(V2,V3)
 const VmulV6_2: T6 = Vmul(V3,V2)
+const VmulV30_1: typeof v30 = Vmul(V5,V6)
 
+// const VmulV50_1 = Vmul(v30, Vmul(v30,v30))
+// const Vmult1: Tmul<typeof v30, typeof v30> = Vmul(v30,v30)
+// const Vmult2: Tmul<Tmul<Tmul<Tmul<Tmul<T10,T10>,T10>,T2>,T1>,T1> = v30 // error,
 
+// const Vmult3: Tadd<T1,Tmul<Tmul<Tmul<T10,T10>,T10>,T1>> = v30 // error
+// const Vmult4: Tadd<Tmul<Tmul<Tmul<T10,T10>,T10>,T1>, T1> = v30
 
 "Inspection of increase/decrease of a number of elems."
 
@@ -338,8 +346,8 @@ export {
     ,Vzero,V1,V2,V3,V4,V5,V6,V7,V8,V9,V10
     ,TpseudoNumber,TELesserUnion,TLesserUnion
     ,RtoV,VtoR
-    ,Vadd,Vmin
+    ,Vadd,Vmin,Vmul
     ,TWrapArray
     ,WrapArray,UnwrapArray
     ,inWrapRest,inWrapConj,inWrapGet
-    ,inWrapTake,inWrapDrop,inWrapConcat,inWrapFilter}
+    ,inWrapTake,inWrapDrop,inWrapConcat,inWrapFilter,inWrapRemove}
