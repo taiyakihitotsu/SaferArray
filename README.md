@@ -58,32 +58,32 @@ They convert a real number to a peano and vice versa, useful for debug.
 All are two arg functions, culculating as +, -, *.  
 Vmin's 2nd arg should be equal to or less than 1st, or it spits a type error.  
 
-- TLesserUnion
-- TELesserUnion
+- TLesserUnion  
+- TELesserUnion  
 They get a type-level number, then return an union type, elements of which are equal to (with 2nd) or less than the number passed.
 
 # Functions 
-Those order of args and name are decided in reference to clojure fns.
+Those order of args and name are decided in reference to clojure fns.  
+  
+(Array and Number written below are wrapped-array and peano-number implicitly.)  
 
-(Array and Number written below are wrapped-array and peano-number implicitly.)
-
-- inWrapGet: Array<T> -> Number -> T
+- inWrapGet: Array<T> -> Number -> T  
 Type error if 2nd is grater than a length of 1st.
 
-- inWrapRest: Array<T> -> Array<T>
+- inWrapRest: Array<T> -> Array<T>  
 This removes a head and dec a length.
 
-- inWrapConj: Array<T> -> T -> Array<T>
+- inWrapConj: Array<T> -> T -> Array<T>  
 This pushes a value into a tail and inc a length.
 
-- inWrapTake, inWrapDrop: Number -> Array<T> -> Array<T>
+- inWrapTake, inWrapDrop: Number -> Array<T> -> Array<T>  
 It splits an array to two part at an index, 1st arg, then inWrapTake returns the left-part and inWrapDrop right-part.  
 In js, it can be translated to slice(0,n) and slice(n,length).  
   
 They spits out a type error if an passed index is grater than a  length of 2nd (the same as inWrapGet).  
 
-- inWrapConcat: Array<T> -> Array<T> -> Array<T>
-- inWrapFilter, inWrapRemove: (T -> boolean) -> Array<T> -> Array<T>
+- inWrapConcat: Array<T> -> Array<T> -> Array<T>  
+- inWrapFilter, inWrapRemove: (T -> boolean) -> Array<T> -> Array<T>  
 
 # Status
 In developing.
