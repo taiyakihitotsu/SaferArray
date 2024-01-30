@@ -32,7 +32,9 @@ test('Vmin', ()=>{
     let v30 = [[[[[[[[[[[[[[[[[[[[V10]]]]]]]]]]]]]]]]]]]]
     expect(Vmin(Vzero,Vzero)).toEqual(Vzero)
     expect(Vmin(V1,Vzero)).toEqual(V1)
+
     // Vmin(Vzero, V1) // type error.
+
     expect(Vmin(Vmin(v30,V10),V10)).toEqual(V10)
 })
 
@@ -46,42 +48,78 @@ test('Vmul', ()=>{
     expect(Vmul(V1,V1)).toEqual(V1)
     expect(Vmul(V1,v30)).toEqual(v30)
     expect(Vmul(v30,V1)).toEqual(v30)
-    // expect(Vmul(V1,v30)).toEqual(V1)
-    // expect(Vmul(V1,v30)).toEqual(V1)
+
+    // expect(Vmul(V1,v30)).toEqual(V30)
+    // expect(Vmul(v30,V1)).toEqual(V30)
+
     expect(Vmul(V2,V3)).toEqual(V6)
     expect(Vmul(V6,V5)).toEqual(v30)
     expect(Vmul(V5,V6)).toEqual(v30)
 })
 
-test('WrapArray', ()=>{
-})
+// test('WrapArray', ()=>{
+// })
 
-test('UnwrapArray', ()=>{
-})
+// test('UnwrapArray', ()=>{
+// })
 
 test('inWrapRest', ()=>{
+    let a = WrapArray([1,2,3,4],V4)
+    let r = inWrapRest(a)
+    expect(r.type).toEqual(V3)
+    expect(r.data).toEqual([2,3,4])
+    expect(UnwrapArray(r)).toEqual([2,3,4])
+    // todo
+    // inWrapRest(WrapArray([], Vzero)) // well
+    // inWrapRest(inWrapRest(WrapArray([], Vzero))) // error (type).
 })
 
 test('inWrapConj', ()=>{
-})
-
-test('inWrapRest', ()=>{
+    let a = WrapArray([1,2,3,4],V4)
+    let r = inWrapConj(a,5)
+    expect(r.type).toEqual(V5)
+    expect(r.data).toEqual([1,2,3,4,5])
+    expect(UnwrapArray(r)).toEqual([1,2,3,4,5])
 })
 
 test('inWrapGet', ()=>{
+    let a = WrapArray([1,2,3,4],V4)
+    let r = inWrapGet(a,Vzero)
+    expect(r).toEqual(1)
 })
 
 test('inWrapConcat', ()=>{
+    let a = WrapArray([1,2,3,4],V4)
+    let b = WrapArray([5,6,7],V3)
+    let r = inWrapConcat(a,b)
+    expect(r.type).toEqual(V7)
+    expect(r.data).toEqual([1,2,3,4,5,6,7])
 })
 
 test('inWrapTake', ()=>{
+    let a = WrapArray([1,2,3,4],V4)
+    let r = inWrapTake(V2,a)
+    expect(r.type).toEqual(V2)
+    expect(r.data).toEqual([1,2])
 })
 
 test('inWrapDrop', ()=>{
+    let a = WrapArray([1,2,3,4],V4)
+    let r = inWrapDrop(V2,a)
+    expect(r.type).toEqual(V2)
+    expect(r.data).toEqual([3,4])
 })
 
 test('inWrapFilter', ()=>{
+    let a = WrapArray([1,2,3,4],V4)
+    let r = inWrapFilter((x: number)=>x > 2, a)
+    expect(r.type).toEqual(V2)
+    expect(r.data).toEqual([3,4])
 })
 
 test('inWrapRemove', ()=>{
+    let a = WrapArray([1,2,3,4],V4)
+    let r = inWrapRemove((x: number)=>x > 2, a)
+    expect(r.type).toEqual(V2)
+    expect(r.data).toEqual([1,2])
 })

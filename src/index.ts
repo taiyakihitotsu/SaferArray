@@ -237,7 +237,7 @@ const inWrapRest =
 	const [a, ...retdata] = data;
 	return {
 	    type: type[0],
-	    data: data }}
+	    data: retdata }}
 
 const inWrapGet =
     <T, N extends TpseudoNumber, S extends TELesserUnion<N>>
@@ -253,7 +253,8 @@ const inWrapConj =
 
 const inWrapTake =
     <T, M extends TpseudoNumber, N extends TELesserUnion<M>>
-    (n: N, {type,data}: {type: M; data: T[];}): {type: N; data: T[];} => {
+    (n: N,
+     {type,data}: {type: M; data: T[];}): {type: N; data: T[];} => {
 	return {
 	    type: n,
 	    data: data.slice(0, VtoR(n))
@@ -317,7 +318,6 @@ const wraptaken = inWrapTake(V2, wtar)
 console.log(VtoR(wraptaken.type))
 console.log(wraptaken)
 // const wraptaken2 = WrapTake(V5, wtaret) // Error.
-
 
 const wrapdropen = inWrapDrop(V3, wtar)
 console.log(VtoR(wrapdropen.type))
