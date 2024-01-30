@@ -24,11 +24,8 @@ const V9: T9 = [V8]
 const V10: T10 = [V9]
 
 type TpseudoNumber  = any[]
-// type TvirtualNumber = Tzero | Array<TvirtualNumber>
-// const testV0: TvirtualNumber = Vzero
-// const testV1: TvirtualNumber = V1
-// const testV2: TvirtualNumber = V2
 
+// type TELesserUnion<T> = T extends Array<infer U> ? (T | TELesserUnion<U>) : never
 type TELesserUnion<T> = T extends Array<infer U> ? (T | TELesserUnion<U>) : never
 type TLesserUnion<T>  = T extends Array<infer U> ? TELesserUnion<U> : never
 
@@ -77,8 +74,10 @@ console.log('VtoR, 1 is', VtoR(V1))
 
 "Math Util for Type Level."
 
-type Tdec<T> = T extends Array<infer U> ? U : never
+// type Tdec<T> = T extends Array<infer U> ? U : never
+type Tdec<T> = T extends Array<infer U> ? U : Tzero
 type Tinc<T> = T extends Array<infer U> ? Array<Array<U>> : never
+
 
 // memo.
 // 2589 error.
@@ -233,7 +232,7 @@ const UnwrapArray =
 
 const inWrapRest =
     <T, N extends TpseudoNumber>
-    ({type, data}: {type: N; data: T[];}): TWrapArray<T, Tdec<N>> => {
+    ({type, data}: {type: N; data: T[];}): TWrapArray<T, NonNullable<Tdec<N>>> => {
 	const [a, ...retdata] = data;
 	return {
 	    type: type[0],
@@ -302,22 +301,35 @@ const tar    = [0, 1, 2, 3]
 const tar2   = [4, 5, 6, 7]
 const tarest = [1, 2, 3]
 
-let wtar: TWrapArray<TExtract<typeof tar>, T4> = WrapArray(tar, V4) // this V4 can be real value 4 automaticaly.
-let wtar2: TWrapArray<TExtract<typeof tar>, T3> = WrapArray(tarest, V3)
+let wtar: TWrapArray<number, T4> = WrapArray(tar, V4)
+let wtar2: TWrapArray<number, T3> = WrapArray(tarest, V3)
 wtar = WrapArray(tar2, V4) // It can be done.
 // wtar = WrapArray([4, 5, 6], V3) // Error.
+
+let __a = WrapArray([0,1,2,3], V4)
+// let __b : TWrapArray<number, T3> = __a
 
 const wtarnum: T4 = wtar.type
 const wtarest = inWrapRest(wtar)
 const wtarestnum: T3 = wtarest.type
 
+let __c : TWrapArray<number, T3> = inWrapRest(__a)
+// let __d : TWrapArray<number, T2> = inWrapRest(__a) // <= Error.
+
 console.log(inWrapConj(wtar, 19))
 console.log(arrayeq(inWrapConj(wtar, 19).type, V5))
+
+let __e : TWrapArray<number, T5> = inWrapConj(__a, 4)
+let __f = WrapArray([0,1,2,3], V4)
+let __g : TWrapArray<number, TLesserUnion<T4>> = inWrapRest(__f)
+__g = inWrapRest(__g)
 
 const wraptaken = inWrapTake(V2, wtar)
 console.log(VtoR(wraptaken.type))
 console.log(wraptaken)
 // const wraptaken2 = WrapTake(V5, wtaret) // Error.
+
+// arrayeq([0,1,2,3], UnwrapArray(inWrapRest(inWrapConj(WrapArray([0,1,2,3])),1)))
 
 const wrapdropen = inWrapDrop(V3, wtar)
 console.log(VtoR(wrapdropen.type))
@@ -336,7 +348,7 @@ const wrapfilter2: TWrapArray<number, TELesserUnion<T3>> = inWrapFilter((x:numbe
 console.log(VtoR(wrapfilter.type))
 console.log(wrapfilter)
 
-//--------------------
+//-------------------- 
 
 console.log('well done')
 
