@@ -57,11 +57,9 @@ test('Vmul', ()=>{
     expect(Vmul(V5,V6)).toEqual(v30)
 })
 
-// test('WrapArray', ()=>{
-// })
-
-// test('UnwrapArray', ()=>{
-// })
+test('WrapArray/UnwrapArray', ()=>{
+    expect(UnwrapArray(WrapArray([0,1,2,3],V4))).toEqual([0,1,2,3])
+})
 
 test('inWrapRest', ()=>{
     let a = WrapArray([1,2,3,4],V4)
@@ -69,6 +67,7 @@ test('inWrapRest', ()=>{
     expect(r.type).toEqual(V3)
     expect(r.data).toEqual([2,3,4])
     expect(UnwrapArray(r)).toEqual([2,3,4])
+
     // todo
     // inWrapRest(WrapArray([], Vzero)) // well
     // inWrapRest(inWrapRest(WrapArray([], Vzero))) // error (type).
