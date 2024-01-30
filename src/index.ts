@@ -74,8 +74,8 @@ console.log('VtoR, 1 is', VtoR(V1))
 
 "Math Util for Type Level."
 
-// type Tdec<T> = T extends Array<infer U> ? U : never
-type Tdec<T> = T extends Array<infer U> ? U : Tzero
+type Tdec<T> = T extends Array<infer U> ? U : never
+// type Tdec<T> = T extends Array<infer U> ? U : Tzero
 type Tinc<T> = T extends Array<infer U> ? Array<Array<U>> : never
 
 
@@ -347,6 +347,10 @@ const wrapfilter2: TWrapArray<number, TELesserUnion<T3>> = inWrapFilter((x:numbe
 // console.log(arraystr(RtoV(2)))
 console.log(VtoR(wrapfilter.type))
 console.log(wrapfilter)
+
+let __h: TWrapArray<number, TELesserUnion<T4>> = inWrapFilter((x:number)=> 2>x, __a)
+__h = WrapArray([4,5,6,7], V4)
+// __h = WrapArray([4,5,6,7,8], V5)
 
 //-------------------- 
 
