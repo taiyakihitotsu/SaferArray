@@ -24,7 +24,7 @@ __g = inWrapRest(__g)
 > error TS2322: Type 'TWrapArray<number, T3>' is not assignable to type 'TWrapArray<number, T2>'.
 ```
 
-The way of translating normal arrays by js is using of WrapArray/UnwrapArray.
+The way of translating normal arrays by js is using of WrapArray/UnwrapArray.  
 This works as identity fn.
 ```
 UnwrapArray(WrapArray([0,1,2,3],V4))
@@ -44,19 +44,19 @@ __h = WrapArray([4,5,6,7,8], V5) // <= error.
 # Functions
 ## Numbers
 - Tzero, T1 ~ T10
-- Vzero, V1 ~ V10
-They are predefined peano-numbers.
-The 1st are used in type level, passed into TWrapArray or type level culculate or something.
+- Vzero, V1 ~ V10  
+They are predefined peano-numbers.  
+The 1st are used in type level, passed into TWrapArray or type level culculate or something.  
 The 2nd are values, passed into WrapArray's 2nd arg or so.
 
 ## Util
-- RtoV, VtoR
+- RtoV, VtoR  
 They convert a real number to a peano and vice versa, useful for debug.
 
 - Tadd, Tmin, Vmul
-- Vadd, Vmin, Vmul
-All are two arg functions, culculating as +, -, *.
-Vmin's 2nd arg should be equal to or less than 1st, or it spits a type error.
+- Vadd, Vmin, Vmul  
+All are two arg functions, culculating as +, -, *.  
+Vmin's 2nd arg should be equal to or less than 1st, or it spits a type error.  
 
 - TLesserUnion
 - TELesserUnion
@@ -77,10 +77,10 @@ This removes a head and dec a length.
 This pushes a value into a tail and inc a length.
 
 - inWrapTake, inWrapDrop: Number -> Array<T> -> Array<T>
-It splits an array to two part at an index, 1st arg, then inWrapTake returns the left-part and inWrapDrop right-part.
-In js, it can be translated to slice(0,n) and slice(n,length).
-
-They spits out a type error if an passed index is grater than a  length of 2nd (the same as inWrapGet).
+It splits an array to two part at an index, 1st arg, then inWrapTake returns the left-part and inWrapDrop right-part.  
+In js, it can be translated to slice(0,n) and slice(n,length).  
+  
+They spits out a type error if an passed index is grater than a  length of 2nd (the same as inWrapGet).  
 
 - inWrapConcat: Array<T> -> Array<T> -> Array<T>
 - inWrapFilter, inWrapRemove: (T -> boolean) -> Array<T> -> Array<T>
