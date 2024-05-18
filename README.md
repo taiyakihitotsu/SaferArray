@@ -3,16 +3,16 @@ This makes an array typed even in a length part.
 
 # Summary
 we cannot assign an length 4 array to an lenth 3 array-arg with this.
-```
+```typescript
 let __a = WrapArray([0,1,2,3], V4)
 let __b: TWrapArray<number, T3> = __a // <= error.
 ```
-```
+```typescript
 > error TS2322: Type 'TWrapArray<number, T4>' is not assignable to type 'TWrapArray<number, T3>'.
 ```
 
 And values returned with inWrap- functions keeps a length info.
-```
+```typescript
 let __c : TWrapArray<number, T3> = inWrapRest(__a)
 let __d : TWrapArray<number, T2> = inWrapRest(__a) // <= error.
 let __e : TWrapArray<number, T5> = inWrapConj(__a, 4)
@@ -20,24 +20,24 @@ let __f = WrapArray([0,1,2,3], V4)
 let __g : TWrapArray<number, TLesserUnion<T4>> = inWrapRest(__f)
 __g = inWrapRest(__g)
 ```
-```
+```typescript
 > error TS2322: Type 'TWrapArray<number, T3>' is not assignable to type 'TWrapArray<number, T2>'.
 ```
 
 The way of translating normal arrays by js is using of WrapArray/UnwrapArray.  
 This works as identity fn.
-```
+```typescript
 UnwrapArray(WrapArray([0,1,2,3],V4))
 ```
 
 As above, TELesserUnion/TLesserUnion is used in the case we don't know the specific length but it should be the same or less than some number.
-```
+```typescript
 let __h: TWrapArray<number, TELesserUnion<T4>> = inWrapFilter((x:number)=> 2 > x , __a)
 __h = WrapArray([4,5,6,7], V4)
 __h = WrapArray([4,5,6,7,8], V5) // <= error.
 
 ```
-```
+```typescript
 > error TS2322: Type 'TWrapArray<number, T5>' is not assignable to type 'TWrapArray<number, Tzero | T1 | T2 | T3 | T4>'
 ```
 
@@ -85,8 +85,8 @@ They spits out a type error if an passed index is grater than a  length of 2nd (
 - inWrapConcat: Array<T> -> Array<T> -> Array<T>  
 - inWrapFilter, inWrapRemove: (T -> boolean) -> Array<T> -> Array<T>  
 
-# Status
-In developing.
+# Author
+https://github.com/taiyakihitotsu
 
 # License
 3-clause BSD license
