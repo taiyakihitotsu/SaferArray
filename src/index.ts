@@ -111,14 +111,7 @@ const VtoR = (n: TpseudoNumber): number => {
 
 ////
 // test
-console.log("RtoV, 1 is", RtoV(1));
-console.log("RtoV, 4 is", RtoV(4));
-console.log("RtoV, 0 is", RtoV(0));
 const t4: T4 = RtoV(4);
-console.log("VtoR, 0 is", VtoR(Vzero));
-console.log("VtoR, 1 is", VtoR(V1));
-
-("Math Util for Type Level.");
 
 type Tdec<T> = T extends Array<infer U> ? U : never;
 // type Tdec<T> = T extends Array<infer U> ? U : Tzero
@@ -408,8 +401,8 @@ const wtarestnum: T3 = wtarest.type;
 const __c: TWrapArray<number, T3> = inWrapRest(__a);
 // let __d : TWrapArray<number, T2> = inWrapRest(__a) // <= Error.
 
-console.log(inWrapConj(wtar, 19));
-console.log(arrayeq(inWrapConj(wtar, 19).type, V5));
+// console.log(inWrapConj(wtar, 19));
+// console.log(arrayeq(inWrapConj(wtar, 19).type, V5));
 
 const __e: TWrapArray<number, T5> = inWrapConj(__a, 4);
 const __f = WrapArray([0, 1, 2, 3], V4);
@@ -417,21 +410,21 @@ let __g: TWrapArray<number, TLesserUnion<T4>> = inWrapRest(__f);
 __g = inWrapRest(__g);
 
 const wraptaken = inWrapTake(V2, wtar);
-console.log(VtoR(wraptaken.type));
-console.log(wraptaken);
+// console.log(VtoR(wraptaken.type));
+// console.log(wraptaken);
 // const wraptaken2 = WrapTake(V5, wtaret) // Error.
 
 // arrayeq([0,1,2,3], UnwrapArray(inWrapRest(inWrapConj(WrapArray([0,1,2,3])),1)))
 
 const wrapdropen = inWrapDrop(V3, wtar);
-console.log(VtoR(wrapdropen.type));
-console.log(wrapdropen);
-console.log(VtoR(Vmin(V4, V3)));
+// console.log(VtoR(wrapdropen.type));
+// console.log(wrapdropen);
+// console.log(VtoR(Vmin(V4, V3)));
 
 const wrapconcat: TWrapArray<number, T7> = inWrapConcat(wtar, wtar2);
 // const wrapconcat2: TWrapArray<number, T6> = WrapConcat(wtar, wtar2) // Error.
-console.log(VtoR(wrapconcat.type));
-console.log(wrapconcat);
+// console.log(VtoR(wrapconcat.type));
+// console.log(wrapconcat);
 
 const wrapfilter: TWrapArray<number, TELesserUnion<T7>> = inWrapFilter(
   (x: number) => 3 > x,
@@ -443,8 +436,8 @@ const wrapfilter2: TWrapArray<number, TELesserUnion<T3>> = inWrapFilter(
 ); // NOTE.
 // const wrapfilter3: TWrapArray<number, T10> = WrapFilter((x:number)=> 3 > x, wrapconcat) // Error.
 // console.log(arraystr(RtoV(2)))
-console.log(VtoR(wrapfilter.type));
-console.log(wrapfilter);
+// console.log(VtoR(wrapfilter.type));
+// console.log(wrapfilter);
 
 let __h: TWrapArray<number, TELesserUnion<T4>> = inWrapFilter(
   (x: number) => 2 > x,
@@ -452,10 +445,6 @@ let __h: TWrapArray<number, TELesserUnion<T4>> = inWrapFilter(
 );
 __h = WrapArray([4, 5, 6, 7], V4);
 // __h = WrapArray([4,5,6,7,8], V5)
-
-//--------------------
-
-console.log("well done");
 
 export {
   arrayeq,
