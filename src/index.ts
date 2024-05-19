@@ -188,6 +188,10 @@ const Tmul0c: Tmul<Tzero, Tzero> = Vzero;
 const Tmul0d: Tmul<Tzero, T1> = Vzero;
 const Tmul0e: Tmul<T1, Tzero> = Vzero;
 const Tmul1a: Tmul<T1, T1> = V1;
+// stress test
+// const TmulSa: Tmul<T10, Tmul<T10, T10> extends infer A ? A : never> = V1;
+
+
 
 const aaaaa: T10 = V10;
 
