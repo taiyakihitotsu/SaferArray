@@ -5,8 +5,8 @@
 type TNumArray = Array<null | TNumArray>;
 
 const generateNestedArray = (depth: number): TNumArray => {
-    if (depth <= 0) return [null];
-    return [generateNestedArray(depth - 1)];
+  if (depth <= 0) return [null];
+  return [generateNestedArray(depth - 1)];
 };
 
 const arr: TNumArray = generateNestedArray(100);

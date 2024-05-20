@@ -2,3 +2,4 @@
 .ignore
 MEMO.md
 node_modules/
+src/.#*

@@ -1,29 +1,30 @@
 // ------------------------------------
 
-import {Tzero, TpseudoNumber} from './peano'
-
-type T1 = Tzero[];
-type T2 = T1[];
-type T3 = T2[];
-type T4 = T3[];
-type T5 = T4[];
-type T6 = T5[];
-type T7 = T6[];
-type T8 = T7[];
-type T9 = T8[];
-type T10 = T9[];
-
-const Vzero: Tzero = [null];
-const V1: T1 = [Vzero];
-const V2: T2 = [V1];
-const V3: T3 = [V2];
-const V4: T4 = [V3];
-const V5: T5 = [V4];
-const V6: T6 = [V5];
-const V7: T7 = [V6];
-const V8: T8 = [V7];
-const V9: T9 = [V8];
-const V10: T10 = [V9];
+import {
+  type T1,
+  type T2,
+  type T3,
+  type T4,
+  type T5,
+  type T6,
+  type T7,
+  type T8,
+  type T9,
+  type T10,
+  type TpseudoNumber,
+  type Tzero,
+  V1,
+  V2,
+  V3,
+  V4,
+  V5,
+  V6,
+  V7,
+  V8,
+  V9,
+  V10,
+  Vzero,
+} from "./peano";
 
 type Tover10<T> = T extends Array<
   Array<Array<Array<Array<Array<Array<Array<Array<Array<infer U>>>>>>>>>
@@ -187,8 +188,6 @@ const Tmul0e: Tmul<T1, Tzero> = Vzero;
 const Tmul1a: Tmul<T1, T1> = V1;
 // stress test
 // const TmulSa: Tmul<T10, Tmul<T10, T10> extends infer A ? A : never> = V1;
-
-
 
 const aaaaa: T10 = V10;
 
