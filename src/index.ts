@@ -1,9 +1,6 @@
 // ------------------------------------
 
-type Tzero = [null];
-
-// biome-ignore lint/suspicious/noExplicitAny:
-type TpseudoNumber = any[];
+import {Tzero, TpseudoNumber} from './peano'
 
 type T1 = Tzero[];
 type T2 = T1[];
