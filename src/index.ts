@@ -446,6 +446,54 @@ let __h: TWrapArray<number, TELesserUnion<T4>> = inWrapFilter(
 __h = WrapArray([4, 5, 6, 7], V4);
 // __h = WrapArray([4,5,6,7,8], V5)
 
+
+
+
+
+
+
+
+
+
+
+
+
+type Operator = "<" | ">" | "=" | "<=" | ">="
+type Calculator = "+" | "-" | "*" | "/" | "%"
+type Zero = 0
+type Peano = Zero | [Peano]
+type Pivot = string | Peano
+type Relation = {pivot: Pivot, op: Operator | Calculator, num: Peano}
+
+type R1 = {"pivot": "A", "op": "<", "num": [[[0]]]}
+type R2 = {"pivot": "A", "op": "<", "num": [[[[0]]]]}
+type OP1 =  {"pivot": [[[[0]]]], "op": "+", "num": [[[[0]]]]}
+type R3 = {"pivot": [0], "op": "<", "num": [[[[0]]]]}
+
+
+
+
+type Validate<A extends Relation, B extends Relation, env = Peano[], _AOP = A["op"], _BOP = B["op"], _Anum = A[""]> = _BOP extends "+" ? _AOP = "<" ?
+
+const testsa : Validate<R1, OP1> = "+"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export {
   arrayeq,
   type Tzero,
